@@ -1,6 +1,7 @@
 package com.gn4me.app.core.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -27,11 +28,12 @@ public class AuthController {
 	private UserService userService;
 
 	@ApiOperation(value = "Sign in User Based on email and password")
+    //@CrossOrigin(origins = "http://localhost:4200")
 	@PostMapping("/signin")
-	public GeneralResponse signin(@RequestParam String email, @RequestParam String password, Transition transition)
+	public GeneralResponse signin(@RequestParam String username, @RequestParam String password, Transition transition)
 			throws Exception {
 		
-		return userService.signin(email, password, transition);
+		return userService.signin(username, password, transition);
 		
 	}
 
@@ -41,13 +43,7 @@ public class AuthController {
 		
 		GeneralResponse response = null;
 		
-		try {
-			response  =  userService.signup(user, transition);
-		} catch(Exception exp) {
-			exp.printStackTrace();
-			//throw new AppException(new ResponseStatus(ResponseCode.GENERAL_FAILURE), transition);
-			throw exp;
-		}
+		response  =  userService.signup(user, transition);
 		
 		return response;
 	}

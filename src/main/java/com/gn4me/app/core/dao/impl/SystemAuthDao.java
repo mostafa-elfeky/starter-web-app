@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -79,7 +80,7 @@ public class SystemAuthDao implements AuthDao {
 
 
 	@Override
-	public User findUserByEmail(String email, Transition transition) throws AppException {
+	public User findUserByUsername(String username, Transition transition) throws AppException {
 		
 		String query = "";
 		Map<String, Object> mapParameters = null;
@@ -87,10 +88,10 @@ public class SystemAuthDao implements AuthDao {
 		
 		try {
 			
-			query = " SELECT USER.* FROM USER WHERE USER.EMAIL= :email and USER.deleted=0";
+			query = " SELECT USER.* FROM USER WHERE USER.EMAIL= :username and USER.deleted=0";
 			
 			mapParameters = new HashMap<String, Object>();
-			mapParameters.put("email", email);
+			mapParameters.put("username", username);
 
 			user =  (User) jdbcTemplate.queryForObject(query, mapParameters, new UserMapper());
 			
@@ -99,10 +100,10 @@ public class SystemAuthDao implements AuthDao {
 				user.setStatus(SystemLoader.statusPerId.get(user.getStatusId()));
 			}
 			
+		} catch(EmptyResultDataAccessException exp) {
+			
 		} catch (Exception exp) {
-			exp.printStackTrace();
-			SqlQueriesUtil.debugSQL(query, mapParameters);
-			logHelper.logThrownExp(exp, "find user by email, " + email, transition);
+			logHelper.logThrownExp(exp, "find user by username, " + username, transition);
 		}
 		return user;
 	}
@@ -255,6 +256,7 @@ public class SystemAuthDao implements AuthDao {
 			user.setFirstName(rs.getString("USER.FIRST_NAME"));
 			user.setLastName(rs.getString("USER.LAST_NAME"));
 			user.setEmail(rs.getString("USER.EMAIL"));
+			user.setUsername(rs.getString("USER.EMAIL"));
 			user.setPassword(rs.getString("USER.USER_PASSWORD"));
 			user.setStatusId(rs.getInt("USER.STATUS_ID"));
 			user.setTrusted(rs.getBoolean("USER.TRUSTED"));

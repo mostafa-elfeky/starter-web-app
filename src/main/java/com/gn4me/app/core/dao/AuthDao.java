@@ -8,7 +8,7 @@ public interface AuthDao {
 
 	public boolean save(User user, Transition transition) throws AppException;
 	
-	public User findUserByEmail(String email, Transition transition) throws AppException;
+	public User findUserByUsername(String username, Transition transition) throws AppException;
 	
 	public User findUserById(Transition transition) throws AppException;
 	

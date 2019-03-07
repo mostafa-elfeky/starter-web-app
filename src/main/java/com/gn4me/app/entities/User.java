@@ -21,6 +21,8 @@ public class User implements Serializable {
 	private String firstName;
 	private String lastName;
 	private String email;
+	private String username;
+	
 	private String image;
 	private int badgeCount;
 	private boolean featured;
@@ -48,19 +50,6 @@ public class User implements Serializable {
 
 	private Gender gender;
 
-	private List<UserReport> userReports;
-
-	private List<UserRequest> userRequests;
-
-	private List<UserSavedContent> userSavedContents;
-
-	private List<Content> contents;
-
-	private List<ContentAction> contentActions;
-
-	private List<ContentReport> contentReports;
-
-	private List<ContentSharing> contentSharings;
 	
 	@JsonIgnore
 	public String[] getRightsFromRules() {

@@ -75,19 +75,21 @@ public class UserService {
 		secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
 	}
 
-	public UserResponse signin(String email, String password, Transition transition) throws AppException {
+	public UserResponse signin(String username, String password, Transition transition) throws AppException {
 		
 		UserResponse response  = new UserResponse();
 		
-		User user = authDao.findUserByEmail(email, transition);
+		User user = authDao.findUserByUsername(username, transition);
 		
 		if(user != null 
-				&& user.getStatus().getCode().equals(SystemStatusEnum.ACTIVE.name())
+				&& user.getStatus().equals(SystemStatusEnum.ACTIVE)
 				&& passwordEncoder.matches(password, user.getPassword())) {
+			
 			 String token = jwtTokenProvider.createToken(user, 1);
 			 user.setSecToken(token);
 			 response.setUser(user);
 			 response.setResponseStatus(ResponseCode.SUCCESS);
+			 
 		} else {
 			response.setResponseStatus(ResponseCode.INVALID_AUTH, transition);
 		}
@@ -124,7 +126,7 @@ public class UserService {
 		}
 		// we may want to test if request date not exceed max date
 		if(email != null && refreshRate != 0 && refreshRate < maxRefreshRate) {
-			User user = authDao.findUserByEmail(email, transition);
+			User user = authDao.findUserByUsername(email, transition);
 			
 			if(user != null) {
 				 String newToken = jwtTokenProvider.createToken(user, refreshRate + 1);
@@ -199,7 +201,7 @@ public class UserService {
 		
 		if(email != null && email != "") {
 			
-			User user = authDao.findUserByEmail(email, transition);
+			User user = authDao.findUserByUsername(email, transition);
 			
 			if(user!= null && user.getId() > 0) {
 				
