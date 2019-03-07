@@ -30,8 +30,8 @@ public class AuthController {
 	@ApiOperation(value = "Sign in User Based on email and password")
     //@CrossOrigin(origins = "http://localhost:4200")
 	@PostMapping("/signin")
-	public GeneralResponse signin(@RequestParam String username, @RequestParam String password, Transition transition)
-			throws Exception {
+	public GeneralResponse signin(@RequestParam String username, @RequestParam String password, 
+			Transition transition) throws Exception {
 		
 		return userService.signin(username, password, transition);
 		
@@ -51,8 +51,7 @@ public class AuthController {
 	@PostMapping("/refresh-key")
 	public GeneralResponse refreshKey(
 			@RequestHeader(value = "Authorization") String bearerToken,
-			Transition transition)
-			throws Exception {
+			Transition transition) throws Exception {
 
 		String token = "";
 
@@ -80,7 +79,6 @@ public class AuthController {
 			Transition transition) throws Exception {
 		
 		return userService.resetPassword(token, password, transition);
-		
 	}
 
 }
