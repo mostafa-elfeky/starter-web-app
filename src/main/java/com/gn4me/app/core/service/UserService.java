@@ -20,6 +20,8 @@ import com.gn4me.app.entities.User;
 import com.gn4me.app.entities.enums.ResponseCode;
 import com.gn4me.app.entities.enums.Security;
 import com.gn4me.app.entities.enums.SystemStatusEnum;
+import com.gn4me.app.entities.response.AppResponse;
+import com.gn4me.app.entities.response.AppResponse.ResponseBuilder;
 import com.gn4me.app.entities.response.GeneralResponse;
 import com.gn4me.app.entities.response.ResponseStatus;
 import com.gn4me.app.entities.response.UserResponse;
@@ -75,26 +77,25 @@ public class UserService {
 		secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
 	}
 
-	public UserResponse signin(String username, String password, Transition transition) throws AppException {
+	public AppResponse<User> signin(String username, String password, Transition transition) throws AppException {
 		
-		UserResponse response  = new UserResponse();
+		ResponseBuilder<User> respBuilder = AppResponse.builder(transition);
 		
 		User user = authDao.findUserByUsername(username, transition);
 		
 		if(user != null 
-				&& user.getStatus().equals(SystemStatusEnum.ACTIVE)
+				&& user.getStatus().getCode().equals(SystemStatusEnum.ACTIVE.name())
 				&& passwordEncoder.matches(password, user.getPassword())) {
 			
 			 String token = jwtTokenProvider.createToken(user, 1);
-			 user.setSecToken(token);
-			 response.setUser(user);
-			 response.setResponseStatus(ResponseCode.SUCCESS);
+			 respBuilder.data(user);
+			 respBuilder.info("token", token);	
 			 
 		} else {
-			response.setResponseStatus(ResponseCode.INVALID_AUTH, transition);
+			respBuilder.status(ResponseCode.INVALID_AUTH);
 		}
-		
-		return response;
+
+		return respBuilder.build();
 	}
 
 	public UserResponse refreshKey(String token, Transition transition) throws AppException {
@@ -182,7 +183,7 @@ public class UserService {
 				if(inserted) {
 					response.setResponseStatus(ResponseCode.SUCCESS);
 				} else {
-					response.setResponseStatus(ResponseCode.NOT_EXIST, transition);
+					//response.setResponseStatus(ResponseCode.NOT_EXIST, transition);
 				}
 			} else {
 				response.setResponseStatus(ResponseCode.FORBIDDEN, transition);
@@ -221,7 +222,7 @@ public class UserService {
 				}
 				
 			} else {
-				response.setResponseStatus(ResponseCode.NOT_EXIST, transition);
+				//response.setResponseStatus(ResponseCode.NOT_EXIST, transition);
 			}
 			
 		} else {

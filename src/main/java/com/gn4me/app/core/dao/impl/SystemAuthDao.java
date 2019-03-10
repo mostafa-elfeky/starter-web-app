@@ -3,15 +3,12 @@ package com.gn4me.app.core.dao.impl;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -48,10 +45,6 @@ public class SystemAuthDao implements AuthDao {
 	
 	@Override
 	public boolean save(User user, Transition transition) throws AppException {
-		
-		if(true) {
-			throw new AppException(new ResponseStatus(ResponseCode.PAYMENT_REQUIRED), transition);
-		}
 		
 		String query = "";
 		boolean inserted = false;

@@ -2,7 +2,7 @@ package com.gn4me.app.entities.response;
 
 
 import com.gn4me.app.entities.Transition;
-import com.gn4me.app.entities.enums.ErrorCode;
+import com.gn4me.app.entities.enums.ResponseCode;
 
 import lombok.Getter;
 import lombok.ToString;
@@ -14,14 +14,14 @@ public class Error {
     private int status;
     private String message;
     
-    public Error(ErrorCode errorCode, Transition transition) {
+    public Error(ResponseCode responseCode, Transition transition) {
     	
     	if(transition != null)
     		this.traceCode = Long.toString(transition.getId());
     	
-    	if(errorCode != null) {
-    		this.status = errorCode.getCode();
-    		this.message = errorCode.getMessage();
+    	if(responseCode != null && responseCode != ResponseCode.SUCCESS) {
+    		this.status = responseCode.getCode();
+    		this.message = responseCode.getMessage();
     	}
     	
     }

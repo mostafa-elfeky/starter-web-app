@@ -1,7 +1,7 @@
 package com.gn4me.app.core.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -13,6 +13,7 @@ import com.gn4me.app.core.service.UserService;
 import com.gn4me.app.entities.Transition;
 import com.gn4me.app.entities.User;
 import com.gn4me.app.entities.enums.Security;
+import com.gn4me.app.entities.response.AppResponse;
 import com.gn4me.app.entities.response.GeneralResponse;
 import com.gn4me.app.log.Loggable;
 import com.gn4me.app.log.Type;
@@ -28,13 +29,13 @@ public class AuthController {
 	private UserService userService;
 
 	@ApiOperation(value = "Sign in User Based on email and password")
-    //@CrossOrigin(origins = "http://localhost:4200")
 	@PostMapping("/signin")
-	public GeneralResponse signin(@RequestParam String username, @RequestParam String password, 
+	public ResponseEntity<AppResponse<User>> signin(@RequestParam String username, @RequestParam String password, 
 			Transition transition) throws Exception {
 		
-		return userService.signin(username, password, transition);
+		AppResponse<User> response = userService.signin(username, password, transition);
 		
+		return new ResponseEntity<AppResponse<User>>(response, response.getHttpStatus());
 	}
 
 	@PostMapping("/signup")
