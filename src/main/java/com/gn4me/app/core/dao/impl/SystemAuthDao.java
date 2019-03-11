@@ -44,10 +44,9 @@ public class SystemAuthDao implements AuthDao {
 
 	
 	@Override
-	public boolean save(User user, Transition transition) throws AppException {
+	public User save(User user, Transition transition) throws AppException {
 		
 		String query = "";
-		boolean inserted = false;
 		
 		try {
 			query = "INSERT INTO user ( user.EMAIL, user.FIRST_NAME, user.LAST_NAME, user.IMAGE, user.USER_PASSWORD, user.STATUS_ID, user.AUTO_CREATED ) "
@@ -60,7 +59,6 @@ public class SystemAuthDao implements AuthDao {
 			
 			if (insertedRows > 0) {
 				user.setId(generatedKeyHolder.getKey().intValue());
-				inserted = true;
 			}
 		} catch(DuplicateKeyException exp) {
 			throw new AppException(new ResponseStatus(ResponseCode.ALREADY_EXIST), exp, transition);
@@ -68,7 +66,7 @@ public class SystemAuthDao implements AuthDao {
 			logHelper.logThrownExp(exp, "Save User, " + user, transition);
 		}
 
-		return inserted;
+		return user;
 	}
 
 

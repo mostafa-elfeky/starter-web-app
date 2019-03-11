@@ -4,7 +4,9 @@ import java.io.IOException;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
-import org.apache.log4j.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailParseException;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -19,7 +21,7 @@ import com.gn4me.app.entities.User;
 @Service
 public class MailHandler {
 
-	private Logger logger = Logger.getLogger("WiseDataCollectionDebugLogger");
+	private final static Logger logger = LoggerFactory.getLogger(MailHandler.class);
 
 	@Autowired
 	AppProps appInfo;

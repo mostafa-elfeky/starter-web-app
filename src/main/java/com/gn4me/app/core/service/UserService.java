@@ -40,6 +40,10 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 
+/**
+ * @author mfeky
+ *
+ */
 @Service
 @Loggable(Type = Type.SERVICCE)
 public class UserService {
@@ -63,6 +67,7 @@ public class UserService {
 	private UtilHandler utilHandler;
 	
 	
+	
 	@PostConstruct
 	protected void init() {
 		securityProps.setSecretKey(Base64.getEncoder().encodeToString(securityProps.getSecretKey().getBytes()));
@@ -73,7 +78,7 @@ public class UserService {
 		ResponseBuilder<User> respBuilder = AppResponse.builder(transition);
 		
 		User user = authDao.findUserByUsername(username, transition);
-				
+						
 		if(user != null 
 				&& user.getStatus().getCode().equals(SystemStatusEnum.ACTIVE.name())
 				&& passwordEncoder.matches(password, user.getPassword())) {
@@ -135,22 +140,22 @@ public class UserService {
 		return response;
 	}
 	
-	public GeneralResponse signup(User user, Transition transition) throws Exception {
+	public AppResponse<User> signup(User user, Transition transition) throws Exception {
 		
-		GeneralResponse response = new GeneralResponse();
+		ResponseBuilder<User> respBuilder = AppResponse.builder(transition);
 		
 		user.setStatusId(SystemLoader.statusPerCode.get(SystemStatusEnum.ACTIVE.name()).getId());
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		
-		boolean inserted = authDao.save(user, transition);
+		User insertedUser = authDao.save(user, transition);
 		
-		if(inserted) {
-			response.setResponseStatus(ResponseCode.SUCCESS);
+		if(insertedUser.getId() > 0) {
+			respBuilder.data(user);
 		} else {
-			response.setResponseStatus(ResponseCode.NO_DATA_SAVED, transition);
+			respBuilder.status(ResponseCode.NO_DATA_SAVED);
 		}
 		
-		return response;
+		return respBuilder.build();
 	}
 	
 	public GeneralResponse updatePassword(String oldPassword, String newPassword, Transition transition) throws AppException {

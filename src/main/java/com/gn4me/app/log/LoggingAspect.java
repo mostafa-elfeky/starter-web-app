@@ -2,13 +2,14 @@ package com.gn4me.app.log;
 
 import java.lang.reflect.Method;
 
-import org.apache.log4j.Logger;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.CodeSignature;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.util.StopWatch;
@@ -16,13 +17,11 @@ import org.springframework.util.StopWatch;
 import com.gn4me.app.entities.Transition;
 
 @Aspect
-//@Component
 @Configuration
 @EnableAspectJAutoProxy(proxyTargetClass=true)
 public class LoggingAspect {
 
-	private Logger logger = Logger.getLogger("AppDebugLogger");
-	private Logger errorLogger = Logger.getLogger("AppErrorLogger");
+	private final static Logger logger = LoggerFactory.getLogger(LoggingAspect.class);
 
 	@Pointcut("within(@Loggable *)")
 	public void classAnnotaionLevel() {
@@ -60,11 +59,10 @@ public class LoggingAspect {
 			logParameters(logStartMessage, joinPoint);
 			
 			// test log Start Message
-			logger.debug(logStartMessage);
+			logger.debug(logStartMessage.toString());
 			
 		} catch (Exception exp) {
-			logger.error("Exception In Logger try to solve It: " + exp);
-			errorLogger.error("Exception In Logger try to solve It: " + exp, exp);
+			logger.error("Exception In Logger try to solve It: " + exp, exp);
 			return joinPoint.proceed();
 		}
 		
@@ -83,11 +81,10 @@ public class LoggingAspect {
 			logEndMessage.append(" Exe Time: [ ").append(stopWatch.getTotalTimeMillis()).append(" ms ]");
 
 			// test log End Message
-			logger.debug(logEndMessage);
+			logger.debug(logEndMessage.toString());
 			
 		} catch (Exception exp) {
-			logger.error("Exception In Logger try to solve It: " + exp);
-			errorLogger.error("Exception In Logger try to solve It: " + exp, exp);
+			logger.error("Exception In Logger try to solve It: " + exp, exp);
 		}
 
 		return retVal;

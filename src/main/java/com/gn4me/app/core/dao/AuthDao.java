@@ -6,7 +6,7 @@ import com.gn4me.app.util.AppException;
  
 public interface AuthDao {
 
-	public boolean save(User user, Transition transition) throws AppException;
+	public User save(User user, Transition transition) throws AppException;
 	
 	public User findUserByUsername(String username, Transition transition) throws AppException;
 	

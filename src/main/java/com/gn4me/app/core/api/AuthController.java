@@ -39,14 +39,12 @@ public class AuthController {
 	}
 
 	@PostMapping("/signup")
-	public GeneralResponse signup(@RequestBody User user, 
+	public ResponseEntity<AppResponse<User>> signup(@RequestBody User user, 
 			Transition transition) throws Exception {
+				
+		AppResponse<User> response = userService.signup(user, transition);
 		
-		GeneralResponse response = null;
-		
-		response  =  userService.signup(user, transition);
-		
-		return response;
+		return new ResponseEntity<AppResponse<User>>(response, response.getHttpStatus());
 	}
 
 	@PostMapping("/refresh-key")

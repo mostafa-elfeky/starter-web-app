@@ -3,7 +3,8 @@ package com.gn4me.app.util;
 
 
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -25,8 +26,7 @@ import com.gn4me.app.entities.response.ResponseStatus;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class AppExceptionHandler {
 
-	private Logger logger = Logger.getLogger("AppDebugLogger");
-	private Logger errorLogger = Logger.getLogger("AppErrorLogger");
+	private final static Logger logger = LoggerFactory.getLogger(AppExceptionHandler.class);
 
 	@ExceptionHandler(AppException.class)
 	@ResponseBody
@@ -36,8 +36,7 @@ public class AppExceptionHandler {
 		GeneralResponse response = new GeneralResponse();
 		Transition transition = exp.getTransition();
 
-		logger.error("[" + transition.getId() + "] Exception happened From, " + exp.getLocalizedMessage());
-		errorLogger.error("[" + transition.getId() + "] Exception happened From, " + exp, exp);
+		logger.error("[" + transition.getId() + "] Exception happened From, " + exp.getLocalizedMessage(), exp);
 
 		if(exp.getStatus() != null) {
 			status = exp.getStatus();
@@ -61,8 +60,7 @@ public class AppExceptionHandler {
 		Transition transition = new Transition();
 		exp.printStackTrace();
 		
-		logger.error("[" + transition.getId() + "] Exception happened From, " +exp.getCause() + exp);
-		errorLogger.error("[" + transition.getId() + "] Exception happened From, " +exp.getCause() + exp, exp);
+		logger.error("[" + transition.getId() + "] Exception happened From, " +exp.getCause() + exp, exp);
 		
 		ResponseStatus responseStatus = new ResponseStatus(ResponseCode.BAD_REQUEST, transition);
 		GeneralResponse generalResponse = new GeneralResponse();
@@ -79,8 +77,7 @@ public class AppExceptionHandler {
 		
 		Transition transition = new Transition();
 		
-		logger.error("[" + transition.getId() + "] Exception happened From, " +exp.getCause() + exp);
-		errorLogger.error("[" + transition.getId() + "] Exception happened From, " +exp.getCause() + exp, exp);
+		logger.error("[" + transition.getId() + "] Exception happened From, " +exp.getCause() + exp, exp);
 		
 		ResponseStatus responseStatus = 
 				new ResponseStatus(ResponseCode.NOT_FOUND, transition);
@@ -98,8 +95,7 @@ public class AppExceptionHandler {
 		
 		Transition transition = new Transition();
 		//exp.printStackTrace();
-		logger.error("[" + transition.getId() + "] Exception happened From, " +exp.getCause() + exp);
-		errorLogger.error("[" + transition.getId() + "] Exception happened From, " +exp.getCause() + exp, exp);
+		logger.error("[" + transition.getId() + "] Exception happened From, " +exp.getCause() + exp, exp);
 		
 		ResponseStatus responseStatus = 
 				new ResponseStatus(ResponseCode.FORBIDDEN, transition);
@@ -116,8 +112,7 @@ public class AppExceptionHandler {
 @Order(Ordered.LOWEST_PRECEDENCE)
 class DefaultExceptionHandler {
 	
-	private Logger logger = Logger.getLogger("AppDebugLogger");
-	private Logger errorLogger = Logger.getLogger("AppErrorLogger");
+	private final static Logger logger = LoggerFactory.getLogger(DefaultExceptionHandler.class);
 
 	@ExceptionHandler(Exception.class)
 	@ResponseBody
@@ -129,8 +124,7 @@ class DefaultExceptionHandler {
 		
 		Transition transition = new Transition();
 		
-		logger.error("[" + transition.getId() + "] Exception happened From, " +exp.getCause() + exp);
-		errorLogger.error("[" + transition.getId() + "] Exception happened From, " +exp.getCause() + exp, exp);
+		logger.error("[" + transition.getId() + "] Exception happened From, " +exp.getCause() + exp, exp);
 		
 		ResponseStatus responseStatus = 
 				new ResponseStatus(ResponseCode.INTERNAL_SERVER_ERROR, transition);

@@ -10,18 +10,20 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
+
 /**
  * The Class DaoUtil.
  */
 public class SqlQueriesUtil {
-	/** Logger to trace info */
-	private static Logger logger = Logger.getLogger("AppDebugLogger");
+
+	private final static Logger logger = LoggerFactory.getLogger(SqlQueriesUtil.class);
 	
 	/**
 	 * @return the setShowSql
