@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.gn4me.app.config.props.AppProps;
+import com.gn4me.app.config.props.SecurityProps;
 import com.gn4me.app.config.security.JwtTokenProvider;
 import com.gn4me.app.core.dao.AuthDao;
 import com.gn4me.app.entities.Transition;
@@ -51,20 +53,8 @@ public class UserService {
 	@Autowired
 	private JwtTokenProvider jwtTokenProvider;
 	
-	@Value("${security.secret-key}")
-	private String secretKey;
-	
-	@Value("${security.max-refresh-rate}")
-	private int maxRefreshRate;
-	
-	@Value("${security.jwt.token.expire-length}")
-	private long validityInMilliseconds;
-	
-	@Value("${security.relogin.state}")
-	private int reloginState;
-	
-	@Value("${user.confirm.validityTime}")
-	int validityTime;
+	@Autowired
+	private SecurityProps securityProps;
 	
 	@Autowired
 	private MailHandler mailHandler;
@@ -72,9 +62,10 @@ public class UserService {
 	@Autowired
 	private UtilHandler utilHandler;
 	
+	
 	@PostConstruct
 	protected void init() {
-		secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
+		securityProps.setSecretKey(Base64.getEncoder().encodeToString(securityProps.getSecretKey().getBytes()));
 	}
 
 	public AppResponse<User> signin(String username, String password, Transition transition) throws AppException {
@@ -82,7 +73,7 @@ public class UserService {
 		ResponseBuilder<User> respBuilder = AppResponse.builder(transition);
 		
 		User user = authDao.findUserByUsername(username, transition);
-		
+				
 		if(user != null 
 				&& user.getStatus().getCode().equals(SystemStatusEnum.ACTIVE.name())
 				&& passwordEncoder.matches(password, user.getPassword())) {
@@ -103,15 +94,15 @@ public class UserService {
 		UserResponse response  = new UserResponse();
 		String email = null;
 		int refreshRate = 0, state = 0;
-
+		
 		try {
-			Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
+			Jws<Claims> claims = Jwts.parser().setSigningKey(securityProps.getSecretKey()).parseClaimsJws(token);
 			
 			email = claims.getBody().getSubject();
 			refreshRate = (Integer)claims.getBody().get(Security.REFRESH_CLAIM.getValue());
 			state = (Integer)claims.getBody().get(Security.RE_LOGIN_STATE.getValue());
 			
-			if(reloginState != state && state != 0) {
+			if(securityProps.getReLoginState() != state && state != 0) {
 				throw new AppException(new ResponseStatus(ResponseCode.DUPRICATED_TOKEN), transition);
 			}
 			
@@ -126,7 +117,7 @@ public class UserService {
 			throw new AppException(new ResponseStatus(ResponseCode.INVALID_TOKEN), transition);
 		}
 		// we may want to test if request date not exceed max date
-		if(email != null && refreshRate != 0 && refreshRate < maxRefreshRate) {
+		if(email != null && refreshRate != 0 && refreshRate < securityProps.getMaxRefreshRate()) {
 			User user = authDao.findUserByUsername(email, transition);
 			
 			if(user != null) {
@@ -150,10 +141,6 @@ public class UserService {
 		
 		user.setStatusId(SystemLoader.statusPerCode.get(SystemStatusEnum.ACTIVE.name()).getId());
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
-		
-		if(true) {
-			//throw new Exception("testtttttttttttttttttttttttttt");
-		}
 		
 		boolean inserted = authDao.save(user, transition);
 		
@@ -208,7 +195,7 @@ public class UserService {
 				
 				user.setEmail(email);
 				user.setToken(UUID.randomUUID().toString().replaceAll("-", ""));
-				user.setTokenExpiryDate(utilHandler.getDateWith(new Date(), validityTime));
+				user.setTokenExpiryDate(utilHandler.getDateWith(new Date(), securityProps.getExpiredWithin()));
 				
 				boolean updated = authDao.updateValidationToken(user, transition);
 				String restPassUrl = utilHandler.getAppInfo().getUserResetPasswordUrl() + "/" + user.getToken();

@@ -11,7 +11,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
-import com.gn4me.app.config.props.AppInfo;
+import com.gn4me.app.config.props.AppProps;
 import com.gn4me.app.entities.Transition;
 import com.gn4me.app.entities.User;
 
@@ -22,7 +22,7 @@ public class MailHandler {
 	private Logger logger = Logger.getLogger("WiseDataCollectionDebugLogger");
 
 	@Autowired
-	AppInfo appInfo;
+	AppProps appInfo;
 		
 	@Autowired
 	private JavaMailSender mailSender;

@@ -14,6 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.stereotype.Component;
 
+import com.gn4me.app.config.props.SecurityProps;
 import com.gn4me.app.entities.Transition;
 import com.gn4me.app.entities.User;
 import com.gn4me.app.entities.enums.ResponseCode;
@@ -30,18 +31,12 @@ import io.jsonwebtoken.SignatureAlgorithm;
 @Component
 public class JwtTokenProvider {
 
-	@Value("${security.secret-key}")
-	private String secretKey;
-
-	@Value("${security.jwt.token.expire-length}")
-	private long validityInMilliseconds;
-	
-	@Value("${security.relogin.state}")
-	private int reloginState;
+	@Autowired
+	SecurityProps securityProps;
 
 	@PostConstruct
 	protected void init() {
-		secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
+		securityProps.setSecretKey(Base64.getEncoder().encodeToString(securityProps.getSecretKey().getBytes()));
 	}
 
 	public String createToken(User user, int refresh) {
@@ -50,14 +45,14 @@ public class JwtTokenProvider {
 		claims.put(Security.RIGHT_CLAIM.getValue(), user.getRightsFromRules());
 		claims.put(Security.USER_ID_CLAIM.getValue(), user.getId());
 		claims.put(Security.REFRESH_CLAIM.getValue(), refresh);
-		claims.put(Security.RE_LOGIN_STATE.getValue(), reloginState);
+		claims.put(Security.RE_LOGIN_STATE.getValue(), securityProps.getReLoginState());
 
 		Date now = new Date();
-		Date validity = new Date(now.getTime() + validityInMilliseconds);
+		Date validity = new Date(now.getTime() + securityProps.getExpiredWithin());
 		
 
 		return Jwts.builder().setClaims(claims).setIssuedAt(now).setExpiration(validity)
-				.signWith(SignatureAlgorithm.HS256, secretKey).compact();
+				.signWith(SignatureAlgorithm.HS256, securityProps.getSecretKey()).compact();
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -67,11 +62,11 @@ public class JwtTokenProvider {
 		
 		try {
 			user = new User();
-			Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
+			Jws<Claims> claims = Jwts.parser().setSigningKey(securityProps.getSecretKey()).parseClaimsJws(token);
 			
 			int state = (Integer)claims.getBody().get(Security.RE_LOGIN_STATE.getValue());
 			
-			if(reloginState != state && state != 0) {
+			if(securityProps.getReLoginState() != state && state != 0) {
 				throw new AppException(new ResponseStatus(ResponseCode.DUPRICATED_TOKEN), transition);
 			}
 			
@@ -110,7 +105,7 @@ public class JwtTokenProvider {
 
 	public boolean validateToken(String token, Transition transition) throws AppException {
 		try {
-			Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
+			Jwts.parser().setSigningKey(securityProps.getSecretKey()).parseClaimsJws(token);
 			return true;
 		} catch (JwtException | IllegalArgumentException e) {
 			e.printStackTrace();

@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.NativeWebRequest;
 
-import com.gn4me.app.config.props.AppInfo;
+import com.gn4me.app.config.props.AppProps;
 import com.gn4me.app.entities.Transition;
 import com.gn4me.app.entities.enums.Language;
 import com.gn4me.app.log.LogHelper;
@@ -26,7 +26,7 @@ public class UtilHandler {
 	LogHelper logHelper;
 	
 	@Autowired
-	AppInfo appInfo;
+	AppProps appInfo;
 	
 	public Language validateLanguage(String lang) throws Exception {
 		if(lang != null && lang != "") {
