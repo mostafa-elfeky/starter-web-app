@@ -144,7 +144,7 @@ public class UserService {
 		
 		ResponseBuilder<User> respBuilder = AppResponse.builder(transition);
 		
-		user.setStatusId(SystemLoader.statusPerCode.get(SystemStatusEnum.ACTIVE.name()).getId());
+		user.setStatus(SystemLoader.statusPerCode.get(SystemStatusEnum.ACTIVE.name()));
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		
 		User insertedUser = authDao.save(user, transition);

@@ -46,7 +46,7 @@ public class Content implements Serializable {
 
 	private Category category;
 
-	private SystemStatus status;
+	private Status status;
 
 	private ContentType contentType;
 

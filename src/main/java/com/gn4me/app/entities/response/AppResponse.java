@@ -4,10 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.gn4me.app.entities.Transition;
+import com.gn4me.app.entities.User;
 import com.gn4me.app.entities.enums.ResponseCode;
 
 import lombok.Getter;
@@ -30,6 +32,11 @@ public class AppResponse<D> {
 		this.metaInfo = metaInfo;
 		this.httpStatus = httpStatus;
 		this.error = error;
+	}
+	
+	@JsonIgnore
+	public ResponseEntity<AppResponse<D>> getResponseEntity() {
+		return new ResponseEntity<AppResponse<D>>(this, this.getHttpStatus());
 	}
 	
 	

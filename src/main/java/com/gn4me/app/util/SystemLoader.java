@@ -16,8 +16,9 @@ import org.springframework.context.annotation.Configuration;
 
 import com.gn4me.app.core.dao.IGeneralDao;
 import com.gn4me.app.entities.Section;
+import com.gn4me.app.entities.Status;
 import com.gn4me.app.entities.SystemConfiguration;
-import com.gn4me.app.entities.SystemStatus;
+import com.gn4me.app.entities.Status;
 import com.gn4me.app.entities.Transition;
 import com.gn4me.app.log.LogHelper;
 
@@ -36,8 +37,8 @@ public class SystemLoader implements SchedulingConfigurer{
 	@Autowired
 	private LogHelper logHelper;
 
-	public static Map<Integer, SystemStatus> statusPerId;
-	public static Map<String, SystemStatus> statusPerCode;
+	public static Map<Integer, Status> statusPerId;
+	public static Map<String, Status> statusPerCode;
 	public static Map<String, String> systemConfigurations;
 	public static Map<String, Section> systemSections;
 
@@ -50,9 +51,9 @@ public class SystemLoader implements SchedulingConfigurer{
 		try {
 			logHelper.log("Going to Load System Status Per ID", transition);
 
-			List<SystemStatus> statusList = generalDao.listSytemStatus(null, transition);
-			statusPerId = new HashMap<Integer, SystemStatus>();
-			for (SystemStatus status : statusList)
+			List<Status> statusList = generalDao.listSytemStatus(null, transition);
+			statusPerId = new HashMap<Integer, Status>();
+			for (Status status : statusList)
 				statusPerId.put(status.getId(), status);
 
 			logHelper.log("System Status Per ID Loaded as: " + statusPerId, transition);
@@ -70,9 +71,9 @@ public class SystemLoader implements SchedulingConfigurer{
 		try {
 			logHelper.log("Going to Load System Status Per Code", transition);
 
-			List<SystemStatus> statusList = generalDao.listSytemStatus(null, new Transition());
-			statusPerCode = new HashMap<String, SystemStatus>();
-			for (SystemStatus status : statusList)
+			List<Status> statusList = generalDao.listSytemStatus(null, new Transition());
+			statusPerCode = new HashMap<String, Status>();
+			for (Status status : statusList)
 				statusPerCode.put(status.getCode(), status);
 
 			logHelper.log("System Status Per ID Loaded as: " + statusPerCode, transition);

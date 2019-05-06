@@ -30,21 +30,24 @@ public class AuthController {
 
 	@ApiOperation(value = "Sign in User Based on email and password")
 	@PostMapping("/signin")
-	public ResponseEntity<AppResponse<User>> signin(@RequestParam String username, @RequestParam String password, 
+	public ResponseEntity<AppResponse<User>> signin(
+			@RequestParam String username, 
+			@RequestParam String password, 
 			Transition transition) throws Exception {
 		
 		AppResponse<User> response = userService.signin(username, password, transition);
 		
-		return new ResponseEntity<AppResponse<User>>(response, response.getHttpStatus());
+		return response.getResponseEntity();
 	}
 
 	@PostMapping("/signup")
-	public ResponseEntity<AppResponse<User>> signup(@RequestBody User user, 
+	public ResponseEntity<AppResponse<User>> signup(
+			@RequestBody User user, 
 			Transition transition) throws Exception {
 				
 		AppResponse<User> response = userService.signup(user, transition);
 		
-		return new ResponseEntity<AppResponse<User>>(response, response.getHttpStatus());
+		return response.getResponseEntity();
 	}
 
 	@PostMapping("/refresh-key")
@@ -64,10 +67,10 @@ public class AuthController {
 	@ApiOperation(value = "Forget password send email to get an email with reset process")
 	@PostMapping("/forget-password")
 	public GeneralResponse forgetPassword(
-			@RequestParam String email, Transition transition) throws Exception {
+			@RequestParam String email, 
+			Transition transition) throws Exception {
 		
 		return userService.forgetPassword(email, transition);
-		
 	}
 	
 	@ApiOperation(value = "Forget password send email to get an email with reset process")

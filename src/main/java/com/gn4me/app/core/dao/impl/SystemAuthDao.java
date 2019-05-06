@@ -88,7 +88,6 @@ public class SystemAuthDao implements AuthDao {
 			
 			if(user != null) {
 				user.setRoles(getUserRoles(user.getId(), transition));
-				user.setStatus(SystemLoader.statusPerId.get(user.getStatusId()));
 			}
 			
 		} catch(EmptyResultDataAccessException exp) {
@@ -117,7 +116,7 @@ public class SystemAuthDao implements AuthDao {
 			
 			if(user != null) {
 				user.setRoles(getUserRoles(user.getId(), transition));
-				user.setStatus(SystemLoader.statusPerId.get(user.getStatusId()));
+				user.setStatus(SystemLoader.statusPerId.get(user.getStatus().getId()));
 			}
 			
 		} catch (Exception exp) {
@@ -239,6 +238,7 @@ public class SystemAuthDao implements AuthDao {
 	
 	//Get user details
 	class UserMapper implements RowMapper<User> {
+		
 		@Override
 		public User mapRow(ResultSet rs, int arg1) throws SQLException {
 			User user = new User();
@@ -249,7 +249,6 @@ public class SystemAuthDao implements AuthDao {
 			user.setEmail(rs.getString("USER.EMAIL"));
 			user.setUsername(rs.getString("USER.EMAIL"));
 			user.setPassword(rs.getString("USER.USER_PASSWORD"));
-			user.setStatusId(rs.getInt("USER.STATUS_ID"));
 			user.setTrusted(rs.getBoolean("USER.TRUSTED"));
 			user.setImage(rs.getString("USER.image"));
 			user.setAutoCreated(rs.getInt("USER.AUTO_CREATED")  == 1 ? true : false );
@@ -257,6 +256,7 @@ public class SystemAuthDao implements AuthDao {
 			user.setTokenExpiryDate(rs.getTimestamp("USER.TOKEN_EXPIRY_DATE"));
 			user.setToken(rs.getString("VALIDATION_TOKEN"));
 			user.setInsertDate(rs.getTimestamp("USER.INSERT_DATE"));
+			user.setStatus(SystemLoader.statusPerId.get(rs.getInt("USER.STATUS_ID")));
 			
 			return user;
 		}
