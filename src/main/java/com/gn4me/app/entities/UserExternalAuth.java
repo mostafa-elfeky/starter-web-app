@@ -25,7 +25,7 @@ public class UserExternalAuth {
 	private AuthExternalProvider authExtProvider;
 	
 	private int statusId;
-	private SystemStatus status;
+	private Status status;
 	
 	private Date insertDate;
 	@JsonIgnore

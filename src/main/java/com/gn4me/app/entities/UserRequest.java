@@ -23,7 +23,7 @@ public class UserRequest implements Serializable {
 
 	private Content content;
 
-	private SystemStatus systemStatus;
+	private Status status;
 
 	private UserRequestType userRequestType;
 

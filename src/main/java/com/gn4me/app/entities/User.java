@@ -15,6 +15,7 @@ import com.fasterxml.jackson.annotation.JsonProperty.Access;
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class User implements Serializable {
+	
 	private static final long serialVersionUID = 1L;
 	
 	private int id;
@@ -33,8 +34,8 @@ public class User implements Serializable {
 	
 	private List<Role> roles;
 
-	private int statusId;
-	private SystemStatus status;
+//	private int statusId;
+	private Status status;
 	private String[] rights;
 	
 	private String secToken;
@@ -45,6 +46,7 @@ public class User implements Serializable {
 	private String password;
 	@JsonIgnore
 	private Date tokenExpiryDate;
+	
 	@JsonIgnore
 	private boolean deleted;
 

@@ -9,7 +9,7 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper=false)
-public class UserDetails extends User{
+public class UserDetails extends User {
 
 	private String address;
 	private String mobileNo;

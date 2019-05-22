@@ -17,7 +17,7 @@ import com.gn4me.app.entities.Section;
 import com.gn4me.app.entities.SectionListingContentType;
 import com.gn4me.app.entities.SectionPage;
 import com.gn4me.app.entities.SystemConfiguration;
-import com.gn4me.app.entities.SystemStatus;
+import com.gn4me.app.entities.Status;
 import com.gn4me.app.entities.Transition;
 import com.gn4me.app.entities.enums.SystemModuleEnum;
 import com.gn4me.app.log.LogHelper;
@@ -32,11 +32,11 @@ public class SystemGeneralDao implements IGeneralDao {
 	private LogHelper logHelper;
 
 	@Override
-	public List<SystemStatus> listSytemStatus(SystemModuleEnum module, Transition transition) throws Exception {
+	public List<Status> listSytemStatus(SystemModuleEnum module, Transition transition) throws Exception {
 
 		String query = "";
 		Map<String, Object> mapParameters = null;
-		List<SystemStatus> status = null;
+		List<Status> status = null;
 
 		try {
 			
@@ -48,11 +48,11 @@ public class SystemGeneralDao implements IGeneralDao {
 				mapParameters.put("all", SystemModuleEnum.ALL.name());
 			}
 
-			status = jdbcTemplate.query(query, mapParameters, new RowMapper<SystemStatus>() {
+			status = jdbcTemplate.query(query, mapParameters, new RowMapper<Status>() {
 
 				@Override
-				public SystemStatus mapRow(ResultSet rs, int arg1) throws SQLException {
-					SystemStatus status = new SystemStatus();
+				public Status mapRow(ResultSet rs, int arg1) throws SQLException {
+					Status status = new Status();
 					status.setId(rs.getInt("ID"));
 					status.setCode(rs.getString("STATUS_CODE"));
 					status.setStatusAr(rs.getString("STATUS_AR"));
